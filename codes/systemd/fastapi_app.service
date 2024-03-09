@@ -1,0 +1,12 @@
+[Unit]
+Description=FastAPI app
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python -m uvicorn main:app --host 127.0.0.1 --port 8082
+WorkingDirectory=/home/agusk/apps/fastapi_app
+User=agusk
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

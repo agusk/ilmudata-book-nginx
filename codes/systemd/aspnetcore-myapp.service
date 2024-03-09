@@ -1,0 +1,15 @@
+[Unit]
+Description=My ASP.NET Core Application
+
+[Service]
+WorkingDirectory=/home/agusk/apps/MyAspNetApp/out
+ExecStart=/usr/bin/dotnet /home/agusk/apps/MyAspNetApp/out/MyAspNetApp.dll
+Restart=always
+RestartSec=10
+SyslogIdentifier=aspnetcore-myapp
+User=agusk
+Environment=ASPNETCORE_ENVIRONMENT=Development
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+server {
+    listen 8586;
+    server_name my-react-app.local;
+
+    root /var/www/my-react-app;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

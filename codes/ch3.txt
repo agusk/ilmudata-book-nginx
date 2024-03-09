@@ -1,0 +1,23 @@
+sudo apt update && sudo apt upgrade -y
+sudo apt install nginx -y
+sudo systemctl start nginx
+sudo systemctl enable nginx
+curl localhost
+
+
+
+docker pull nginx
+docker run -d -p 80:80 --name nginx-container nginx
+curl localhost
+
+
+sudo systemctl status nginx
+docker ps | grep nginx
+sudo systemctl stop nginx
+docker stop nginx-container
+
+
+
+sudo nano /etc/nginx/nginx.conf
+sudo nginx -t
+sudo systemctl reload nginx

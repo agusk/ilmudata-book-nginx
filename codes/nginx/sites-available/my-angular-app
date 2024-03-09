@@ -1,0 +1,11 @@
+server {
+    listen 8585;
+    server_name my-angular-app.local;
+
+    root /var/www/my-angular-app;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

@@ -1,0 +1,84 @@
+sudo mkdir -p /var/www/testdomain.local/html
+echo "Welcome to testdomain.local!" | sudo tee /var/www/testdomain.local/html/index.html
+sudo nano /etc/nginx/sites-available/testdomain.local
+sudo ln -s /etc/nginx/sites-available/testdomain.local /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+echo "127.0.0.1 testdomain.local" | sudo tee -a /etc/hosts
+
+
+
+sudo mkdir -p /var/www/app1
+sudo mkdir -p /var/www/app2
+
+echo "Welcome to App 1" | sudo tee /var/www/app1/index.html
+echo "Welcome to App 2" | sudo tee /var/www/app2/index.html
+
+sudo nano /etc/nginx/sites-available/app1.local
+sudo nano /etc/nginx/sites-available/app2.local
+
+sudo ln -s /etc/nginx/sites-available/app1.local /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/app2.local /etc/nginx/sites-enabled/
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+
+sudo mkdir -p /var/www/neuville.id/html
+echo "Welcome to neuville.id" | sudo tee /var/www/neuville.id/html/index.html
+sudo mkdir -p /var/www/testbed101.neuville.id/html
+
+
+echo "Welcome to the testbed101.neuville.id" | sudo tee /var/www/testbed101.neuville.id/html/index.html
+sudo nano /etc/nginx/sites-available/testbed101.neuville.id
+
+
+sudo ln -s /etc/nginx/sites-available/neuville.id /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/testbed101.neuville.id /etc/nginx/sites-enabled/
+
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+
+sudo mkdir -p /var/www/staticweb.neuville.id
+echo "h1 { color: blue; }" | sudo tee /var/www/my-static-web-app/styles.css
+echo "console.log('Static web app loaded!');" | sudo tee /var/www/my-static-web-app/scripts.js
+
+sudo ln -s /etc/nginx/sites-available/staticweb.neuville.id /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+
+sudo nano /etc/nginx/sites-available/old-neuville.id
+sudo nano /etc/nginx/sites-available/neuville.id
+
+sudo nginx -t
+sudo nginx -s reload
+
+
+
+sudo apt update
+sudo apt install certbot python3-certbot-nginx
+
+sudo apt update
+sudo apt install snapd
+
+snap --version
+sudo snap install core; sudo snap refresh core
+
+sudo snap install --classic certbot
+
+
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo certbot --nginx -d example.com -d www.example.com
+sudo certbot --nginx -d sub.example.com
+sudo certbot --nginx -d testbed101.neuville.id
+
+sudo certbot renew --dry-run
+sudo ufw allow 'nginx Full'
+
+sudo nginx -s reload
+
+
