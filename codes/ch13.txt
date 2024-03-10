@@ -1,0 +1,41 @@
+sudo nano /etc/nginx/nginx.conf
+
+log_format custom_format '$remote_addr - $request_method - $request_uri - $status - $http_user_agent';
+
+sudo nginx -t
+
+
+sudo nano /etc/nginx/sites-available/default
+
+access_log /var/log/nginx/custom_access.log custom_format;
+
+
+wget -O - https://deb.goaccess.io/gnugpg.key | gpg --dearmor \
+    | sudo tee /usr/share/keyrings/goaccess.gpg >/dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/goaccess.gpg arch=$(dpkg --print-architecture)] https://deb.goaccess.io/ $(lsb_release -cs) main" \
+    | sudo tee /etc/apt/sources.list.d/goaccess.list
+
+sudo apt-get update
+sudo apt-get install goaccess
+
+
+sudo nano /etc/nginx/sites-available/staticweb.local
+
+sudo rm /etc/nginx/sites-enabled/staticweb.local
+sudo ln -s /etc/nginx/sites-available/staticweb.local /etc/nginx/sites-enabled/
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+goaccess /var/log/nginx/staticweb.log -o /var/www/staticweb.local/html/report.html --real-time-html --log-format='%h - %^ [%d:%t %^] "%r" %s %b "%R" "%u" "%^"' --date-format=%d/%b/%Y
+
+goaccess /var/log/nginx/staticweb.log -o /var/www/staticweb.local/html/report.html --real-time-html --log-format='%h - %^ [%d:%t %^] "%r" %s %b "%R" "%u" "%^"' --date-format=%d/%b/%Y --time-format=%T --daemonize
+
+goaccess /var/log/nginx/staticweb.log -o /var/www/staticweb.local/html/report.html --real-time-html --log-format='%h - %^ [%d:%t %^] "%r" %s %b "%R" "%u" "%^"' --date-format=%d/%b/%Y --time-format=%T
+
+
+
+
+

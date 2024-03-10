@@ -1,0 +1,55 @@
+sudo apt update
+sudo apt install certbot
+
+
+sudo certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com
+openssl genpkey -algorithm RSA -out private_key.pem
+
+sudo apt install openssl
+openssl req -new -x509 -key private_key.pem -out certificate.pem -days 365
+
+sudo nano /etc/nginx/sites-available/yourdomain.com
+
+add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Content-Security-Policy "default-src 'self';" always;
+add_header Referrer-Policy "no-referrer-when-downgrade" always;
+add_header Feature-Policy "geolocation 'none'; microphone 'none'; camera 'none'" always;
+add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+sudo nano /etc/nginx/sites-available/yourdomain.com
+sudo nginx -t
+sudo systemctl reload nginx
+curl -I https://yourdomain.com
+
+
+
+sudo nano /etc/nginx/sites-available/yourdomain.com
+
+autoindex off;
+
+
+client_body_timeout 10;
+client_header_timeout 10;
+keepalive_timeout 5 5;
+send_timeout 10;
+
+if ($http_user_agent ~ (agent1|agent2|BadBot)) {
+   return 403;
+}
+
+limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/m;
+limit_req zone=mylimit;
+
+
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' cdn.example.com";
+
+
+sudo nginx -t
+sudo systemctl reload nginx

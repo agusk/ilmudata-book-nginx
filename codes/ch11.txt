@@ -1,0 +1,80 @@
+sudo apt update && sudo apt install -y git
+git clone https://github.com/agusk/staticweb.git
+cd staticweb && python3 -m http.server 8071
+
+
+sudo nano /etc/nginx/nginx.conf
+
+
+worker_processes auto;
+events {
+    worker_connections 1024;
+}
+
+
+client_body_buffer_size 10K;
+client_header_buffer_size 1k;
+client_max_body_size 8m;
+large_client_header_buffers 2 1k;
+client_body_timeout 12;
+client_header_timeout 12;
+
+
+sudo mkdir -p /var/www/staticweb.local/html
+sudo cp * /var/www/staticweb.local/html
+
+sudo chown -R $USER:$USER /var/www/staticweb.local/html
+sudo chmod -R 755 /var/www/staticweb.local
+
+
+sudo nano /etc/nginx/sites-available/staticweb.local
+sudo ln -s /etc/nginx/sites-available/staticweb.local /etc/nginx/sites-enabled/
+
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+
+sudo apt update && sudo apt install -y git
+git clone https://github.com/agusk/staticweb.git
+sudo nano /etc/nginx/nginx.conf
+
+gzip on;
+gzip_disable "msie6";
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 6;
+gzip_buffers 16 8k;
+gzip_http_version 1.1;
+gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+
+sudo nano /etc/nginx/sites-available/sample-website
+sudo ln -s /etc/nginx/sites-available/sample-website /etc/nginx/sites-enabled/
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+sudo apt update && sudo apt install -y git
+git clone https://github.com/agusk/staticweb.git
+
+cd staticweb && python3 -m http.server 8082
+
+sudo nano /etc/nginx/nginx.conf
+
+
+sendfile on;
+tcp_nopush on;
+tcp_nodelay on;
+keepalive_timeout 65;
+types_hash_max_size 2048;
+
+include /etc/nginx/mime.types;
+default_type application/octet-stream;
+
+
+sudo nano /etc/nginx/sites-available/media-optimized
+sudo ln -s /etc/nginx/sites-available/media-optimized /etc/nginx/sites-enabled/  
+sudo nginx -t
+sudo systemctl reload nginx
+

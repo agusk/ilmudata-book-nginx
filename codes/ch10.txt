@@ -1,0 +1,38 @@
+sudo apt install python3 python3-pip python-is-python3
+pip install Flask gunicorn
+
+mkdir webapp
+cd webapp
+
+
+nano delayed_app.py
+gunicorn delayed_app:app -b 127.0.0.1:5000 --daemon
+curl localhost:5000
+
+sudo mkdir -p /var/cache/nginx
+sudo chown www-data:www-data /var/cache/nginx
+
+sudo ln -s /etc/nginx/sites-available/webapp /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+time curl http://<server-ip>:8050/
+
+
+sudo apt install python3 python3-pip python-is-python3
+pip3 install Flask gunicorn
+
+cd webapp
+nano timestamp_app.py
+
+gunicorn timestamp_app:app -b 127.0.0.1:5001 --daemon
+curl localhost:5001
+
+
+sudo nano /etc/nginx/sites-available/webdynamic
+sudo ln -s /etc/nginx/sites-available/webdynamic /etc/nginx/sites-enabled/
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+

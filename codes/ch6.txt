@@ -1,0 +1,66 @@
+pip3 install websockets
+
+mkdir websocket_app
+cd websocket_app
+
+python3 server.py
+sudo systemctl start websocketapp
+sudo systemctl enable websocketapp
+sudo systemctl status websocketapp
+
+
+sudo nano /etc/nginx/sites-available/websocket_app
+sudo ln -s /etc/nginx/sites-available/websocket_app /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+
+sudo mkdir /var/www/staticwebapp
+sudo nano /var/www/staticwebapp/index.html
+sudo nano /var/www/staticwebapp/styles.css
+sudo nano /var/www/staticwebapp/script.js
+
+openssl genpkey -algorithm RSA -out private_key.pem
+sudo apt install openssl
+openssl req -new -x509 -key private_key.pem -out certificate.pem -days 365
+
+
+sudo mkdir /etc/nginx/ssl
+sudo cp certificate.pem /etc/nginx/ssl/fullchain.pem
+sudo cp private_key.pem /etc/nginx/ssl/privkey.pem
+
+
+cd /etc/nginx/sites-available/
+sudo nano myStaticApp
+
+sudo ln -s /etc/nginx/sites-available/myStaticApp /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+pip install grpcio grpcio-tools
+mkdir grpc_app
+cd grpc_app
+
+nano helloworld.proto
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. helloworld.proto
+nano server.py
+python server.py
+
+
+sudo nano /etc/systemd/system/grcpapp.service
+sudo systemctl start grcpapp
+sudo systemctl enable grcpapp
+sudo systemctl status grcpapp
+
+
+cd /etc/nginx/sites-available/
+sudo nano grcpapp
+
+sudo ln -s /etc/nginx/sites-available/grcpapp /etc/nginx/sites-enabled/
+sudo nginx -t
+
+sudo systemctl restart nginx
+pip install grpcio grpcio-tools
+nano client.py
+python client.py

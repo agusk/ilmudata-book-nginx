@@ -1,0 +1,121 @@
+nginx -V 2>&1 | grep --color -o http_gzip
+
+
+http {
+    gzip on;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+}
+
+git clone https://github.com/openresty/headers-more-nginx-module.git
+
+wget 'http://nginx.org/download/nginx-1.18.0.tar.gz'
+tar -xzvf nginx-1.18.0.tar.gz
+cd nginx-1.18.0/
+./configure --with-compat --add-dynamic-module=../headers-more-nginx-module
+make && sudo make install
+
+sudo cp <module-path>/ngx_http_headers_more_filter_module.so /usr/share/nginx/modules
+ls /usr/share/nginx/modules
+
+
+load_module modules/ngx_http_headers_more_filter_module.so;
+
+server {
+    location / {
+        more_set_headers "WebID: A12345678";
+    }
+}
+
+
+sudo ln -s /etc/nginx/sites-available/staticweb.local /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+
+sudo systemctl disable nginx
+sudo systemctl stop nginx
+
+wget -O - https://openresty.org/package/pubkey.gpg | sudo gpg --dearmor -o /usr/share/keyrings/openresty.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/openresty.gpg] http://openresty.org/package/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/openresty.list > /dev/null
+
+
+
+sudo apt-get update
+sudo apt-get install openresty
+
+
+sudo systemctl enable openresty
+sudo systemctl start openresty
+
+sudo systemctl status openresty
+
+
+mkdir mynginx
+cd mynginx
+
+git clone https://github.com/openresty/luajit2
+cd luajit2
+make
+sudo make install
+
+export LUAJIT_LIB=/usr/local/lib
+export LUAJIT_INC=/usr/local/include/luajit-2.1
+
+
+cd ../
+git clone https://github.com/vision5/ngx_devel_kit.git
+
+cd ../
+git clone https://github.com/openresty/lua-resty-core.git   
+cd lua-resty-core/
+sudo make install LUA_LIB_DIR=/usr/local/share/lua/5.1
+
+cd ../
+git clone https://github.com/openresty/lua-resty-lrucache.git
+cd lua-resty-lrucache
+
+cd ../
+
+wget 'https://nginx.org/download/nginx-1.18.0.tar.gz'
+tar -xzvf nginx-1.18.0.tar.gz
+
+git clone https://github.com/openresty/lua-nginx-module.git
+
+cd nginx-1.18.0/
+
+./configure --with-compat --with-ld-opt="-Wl,-rpath,/usr/local/lib" \
+         --add-dynamic-module=../ngx_devel_kit \
+         --add-dynamic-module=../lua-nginx-module
+
+make
+sudo make install
+
+
+sudo cp /usr/local/nginx/modules/ndk_http_module.so /usr/share/nginx/modules
+sudo cp /usr/local/nginx/modules/ngx_http_lua_module.so /usr/share/nginx/modules
+
+
+load_module modules/ndk_http_module.so;
+load_module modules/ngx_http_lua_module.so;
+
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl reload nginx
+
+
+mkdir ~/apps
+
+sudo nano /etc/nginx/sites-available/staticweb.local
+
+
+
+sudo rm /etc/nginx/sites-enabled/staticweb.local
+sudo ln -s /etc/nginx/sites-available/staticweb.local /etc/nginx/sites-enabled/
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+local user_agent = ngx.var.http_user_agent
+ngx.header["User-Agent-Received"] = user_agent
+ngx.say("User-Agent header received: " .. user_agent)
+

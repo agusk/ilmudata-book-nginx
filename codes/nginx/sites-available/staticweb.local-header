@@ -1,0 +1,19 @@
+server {
+    listen 8071;
+    server_name staticweb.local;
+
+    root /var/www/staticweb.local/html;
+    index index.html;
+
+    client_body_buffer_size 10K;
+    client_header_buffer_size 1k;
+    client_max_body_size 8m;
+    large_client_header_buffers 2 1k;
+    client_body_timeout 12;
+    client_header_timeout 12;
+
+    location / {
+        more_set_headers "WebID: A12345678";
+        try_files $uri $uri/ =404;
+    }
+}
